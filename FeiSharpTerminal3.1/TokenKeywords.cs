@@ -37,5 +37,6 @@ namespace FeiSharpStudio
         public static readonly string read = "read";
         public static readonly string import = "import";
         public static readonly string annotation = "annotation";
+        public static readonly string define = "define";
     }
 }

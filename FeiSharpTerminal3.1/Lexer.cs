@@ -95,6 +95,7 @@ namespace FeiSharpStudio
                     else if (value == TokenKeywords.read) return new Token(TokenTypes.Keyword, "read");
                     else if (value == TokenKeywords.import) return new Token(TokenTypes.Keyword, "import");
                     else if (value == TokenKeywords.annotation) return new Token(TokenTypes.Keyword, "annotation");
+                    else if (value == TokenKeywords.define) return new Token(TokenTypes.Keyword, "define");
                     else if (value == TokenKeywords.func) { 
                         return new Token(TokenTypes.Keyword, "func"); 
                     }

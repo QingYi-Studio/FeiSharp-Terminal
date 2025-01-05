@@ -9,7 +9,7 @@ namespace FeiSharpStudio
     public class Parser
     {
         private Stopwatch Stopwatch { get; set; }
-        private readonly List<Token> _tokens;
+        private List<Token> _tokens;
         private int _current;
         public Dictionary<string, object> _variables = new();
         public Dictionary<string, FunctionInfo> _functions = new();
@@ -136,15 +136,86 @@ namespace FeiSharpStudio
                 {
                     ParseAnnotationStatement();
                 }
+                else if (MatchKeyword(TokenKeywords.define))
+                {
+                    ParseDefineStatement();
+                }
                 else if (MatchFunction(Peek().Value))
                 {
                     RunFunction(Peek().Value);
                 }
-            } while (!IsAtEnd() && (Peek().Type == TokenTypes.Keyword || _functions.ContainsKey(Peek().Value) || _classInfos.ContainsKey(Peek().Value)));
+                else
+                {
+                    if (IsAtEnd())
+                    {
+                        break;
+                    }
+                    if(Peek().Value.Contains("exit"))
+                    {
+                        Advance();
+                        return;
+                    }
+                    OnOutputEvent(new(Peek().Value+": It is not a defined-variable, function, readonlyclass, or modal.If it is a STRING_OBJ, Please use \""+Peek().Value+"\"."));
+                    Advance();
+                }
+            } while (!IsAtEnd());
         }
         bool isfileassembly = false;
         bool isjsonassembly = false;
         bool isnetassembly = false;
+        Dictionary<string,string> modals = new Dictionary<string,string>();
+        private void ParseDefineStatement()
+        {
+            string context = EvaluateExpression(ParseExpression()).ToString();
+            if(context == "modal")
+            {
+                try
+                {
+                    string modalName = EvaluateExpression(ParseExpression()).ToString();
+                    string modalSet = EvaluateExpression(ParseExpression()).ToString();
+                    modals.Add(modalName, modalSet);
+                    _variables.Add(modalName, modalSet);
+                }
+                catch
+                {
+                    OnOutputEvent(new("Enter STRING_OBJ('modalName' or 'modalSet') is not valid."));
+                }
+            }
+            else if(context == "edit")
+            {
+                try
+                {
+                    string id = EvaluateExpression(ParseExpression()).ToString();
+                    string value = EvaluateExpression(ParseExpression()).ToString();
+                    modals[id] = value;
+                    _variables[id] = value;
+                }
+                catch
+                {
+                    OnOutputEvent(new("Enter STRING_OBJ('id' or 'value') is not valid."));
+                }
+            }
+            else if(context == "view")
+            {
+                if(modals.Count == 0)
+                {
+                    Console.WriteLine("MODALS_OBJS:It is empty.");
+                }
+                else
+                {
+                    foreach (var item in modals)
+                    {
+                        OnOutputEvent(new("[" + item.Key + ":" + item.Value + "]" + "\r\n"));
+                    }
+                }
+            }
+            else
+            {
+                OnOutputEvent(new(context+": It is not a correct DEFINE_OBJ.DEFiNE_OBJ is must be 'modal', 'view' or 'edit'."));
+                Advance();
+            }
+            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+        }
         private void ParseAnnotationStatement()
         {
             if (!MatchPunctuation("(")) throw new Exception("Expected '('");
