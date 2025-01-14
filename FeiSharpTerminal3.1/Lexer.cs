@@ -24,6 +24,8 @@ namespace FeiSharpStudio
                     _index++;
                     continue;
                 }
+                if (current == '&') { _index++; return new Token(TokenTypes.Operator, "&"); }
+                if (current == '|') { _index++; return new Token(TokenTypes.Operator, "|"); }
                 if (current == '.') { _index++; return new Token(TokenTypes.Punctuation, "."); }
                 if (current == ']') { _index++; return new Token(TokenTypes.Punctuation, "]"); }
                 if (current == '[') { _index++; return new Token(TokenTypes.Punctuation, "["); }
@@ -96,6 +98,10 @@ namespace FeiSharpStudio
                     else if (value == TokenKeywords.import) return new Token(TokenTypes.Keyword, "import");
                     else if (value == TokenKeywords.annotation) return new Token(TokenTypes.Keyword, "annotation");
                     else if (value == TokenKeywords.define) return new Token(TokenTypes.Keyword, "define");
+                    else if (value == TokenKeywords.readline) return new Token(TokenTypes.Keyword, "readline");
+                    else if (value == TokenKeywords.readkey) return new Token(TokenTypes.Keyword, "readkey");
+                    else if (value == TokenKeywords.ctype) return new Token(TokenTypes.Keyword, "ctype");
+                    else if (value == TokenKeywords.cstr) return new Token(TokenTypes.Keyword, "cstr");
                     else if (value == TokenKeywords.func) { 
                         return new Token(TokenTypes.Keyword, "func"); 
                     }

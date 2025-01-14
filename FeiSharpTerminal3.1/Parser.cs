@@ -140,23 +140,29 @@ namespace FeiSharpStudio
                 {
                     ParseDefineStatement();
                 }
+                else if (MatchKeyword(TokenKeywords.readline))
+                {
+                    ParseReadLineStatement();
+                }
+                else if(MatchKeyword(TokenKeywords.readkey))
+                {
+                    ParseReadKeyStatement();
+                }
+                else if (MatchKeyword(TokenKeywords.ctype))
+                {
+                    ParseCTypeStatement();
+                }
+                else if (MatchKeyword(TokenKeywords.cstr))
+                {
+                    ParseCStRStatement();
+                }
                 else if (MatchFunction(Peek().Value))
                 {
                     RunFunction(Peek().Value);
                 }
                 else
                 {
-                    if (IsAtEnd())
-                    {
-                        break;
-                    }
-                    if(Peek().Value.Contains("exit"))
-                    {
-                        Advance();
-                        return;
-                    }
-                    OnOutputEvent(new(Peek().Value+": It is not a defined-variable, function, readonlyclass, or modal.If it is a STRING_OBJ, Please use \""+Peek().Value+"\"."));
-                    Advance();
+                    Runclass(Peek().Value);
                 }
             } while (!IsAtEnd());
         }
@@ -164,6 +170,84 @@ namespace FeiSharpStudio
         bool isjsonassembly = false;
         bool isnetassembly = false;
         Dictionary<string,string> modals = new Dictionary<string,string>();
+        private void ParseCStRStatement()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            object convertItem = EvaluateExpression(ParseExpression());
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            string varname = EvaluateExpression(ParseExpression()).ToString();
+            _variables.Add(varname, convertItem.ToString());
+            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
+            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+        }
+        private void ParseCTypeStatement()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            object convertItem = EvaluateExpression(ParseExpression());
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            string type = EvaluateExpression(ParseExpression()).ToString();
+            Type typeT = null;
+            if (type == "system.integer")
+            {
+                typeT = typeof(int);
+            }
+            else if(type == "system.string")
+            {
+                typeT = typeof(string);
+            }
+            else if(type == "system.boolean")
+            {
+                typeT = typeof(bool);
+            }
+            object convertedItem = Convert.ChangeType(convertItem, typeT != null ? typeT : typeof(string));
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            string varname = EvaluateExpression(ParseExpression()).ToString();
+            if (convertedItem is int)
+            {
+                _variables.Add(varname, Convert.ToInt32(convertedItem));
+            }
+            else if (convertedItem is string) { 
+                _variables.Add(varname, convertedItem.ToString());
+            }
+            else
+            {
+                _variables.Add(varname, bool.Parse(convertedItem.ToString()));
+            }
+            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
+            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+        }
+        private void ParseReadLineStatement()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            if(name == "_")
+            {
+                Console.ReadLine();
+            }
+            else
+            {
+                _variables.Add(name,Console.ReadLine());
+            }
+            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
+            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+        }
+        private void ParseReadKeyStatement()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            if (name == "_")
+            {
+                Console.ReadKey();
+            }
+            else
+            {
+                _variables
+                .Add(name, Console.ReadKey().KeyChar.ToString());
+            }
+            Console.WriteLine();
+            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
+            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+        }
         private void ParseDefineStatement()
         {
             string context = EvaluateExpression(ParseExpression()).ToString();
@@ -199,7 +283,7 @@ namespace FeiSharpStudio
             {
                 if(modals.Count == 0)
                 {
-                    Console.WriteLine("MODALS_OBJS:It is empty.");
+                    Console.WriteLine("MODALS_OBJS: It is empty.");
                 }
                 else
                 {
@@ -207,6 +291,7 @@ namespace FeiSharpStudio
                     {
                         OnOutputEvent(new("[" + item.Key + ":" + item.Value + "]" + "\r\n"));
                     }
+                    OnOutputEvent(new(modals.Count+" modals in MODALS_OBJS."));
                 }
             }
             else
@@ -281,7 +366,8 @@ namespace FeiSharpStudio
             {
                 goto Parse;
             }
-            Parse:
+        Parse:
+            Advance();
             if (classInfo != null) {
                 if (Peek().Value == ".") {
                     Advance();
@@ -291,6 +377,7 @@ namespace FeiSharpStudio
                         funcorvarname = Peek().Value;
                         isFunc = true;
                         RunFunction(Peek().Value);
+                        Advance();
                     }
                     else if (classInfo._Vars.ContainsKey(Peek().Value))
                     {
@@ -660,7 +747,7 @@ namespace FeiSharpStudio
             }
             else if (a.Equals("github", StringComparison.OrdinalIgnoreCase))
             {
-                OnOutputEvent(new("https://github.com/Mars-FeiFei/FeiSharp \r\n It is copy to your clipboard."));
+                OnOutputEvent(new("https://github.com/Mars-FeiFei/FeiSharp-Terminal/tree/main\r\n"));
             }
             else
             {
@@ -728,6 +815,10 @@ namespace FeiSharpStudio
                 OnOutputEvent(new OutputEventArgs($"var {item.Key} = {item.Value} : {item.Value.GetType()}"));
             }
             OnOutputEvent(new OutputEventArgs($"{_variables.Count}" + " items of vars."));
+            //Console Edition
+            Console.WriteLine("Enter any key to continue......");
+            Console.ReadKey();
+            Console.WriteLine();
         }
         private void ParseStartStatement()
         {
@@ -933,7 +1024,7 @@ namespace FeiSharpStudio
         private Expr ParseExpression()
         {
             Expr expr = ParsePrimary();
-            while (MatchOperator("+", "-", "*", "/", "|", "^", "<", ">", "=", "!"))
+            while (MatchOperator("+", "-", "*", "/", "|", "^", "<", ">", "=", "!","|","&"))
             {
                 string op = Previous().Value;
                 Expr right = ParsePrimary();
@@ -1177,7 +1268,14 @@ namespace FeiSharpStudio
                     }
                     else
                     {
-                        return numExpr.Value;
+                        if(numExpr.Value is string)
+                        {
+                            return numExpr.Value.ToString();
+                        }
+                        else
+                        {
+                            return bool.Parse(numExpr.Value.ToString());
+                        }
                     }
 
                 case BinaryExpr binExpr:
@@ -1189,6 +1287,18 @@ namespace FeiSharpStudio
                         {
                             "+" => (string)left + (string)right,
                             "-" => Regex.Replace((string)left, Regex.Escape((string)right), ""),
+                            "=" => (string)left == (string)right,
+                            "!" => (string)left != (string)right,
+                            _ => throw new Exception("Unexpected operator: " + binExpr.Operator)
+                        };
+                    }
+                    else if (right is bool && left is bool)
+                    {
+                        return binExpr.Operator switch
+                        {
+                            "&" => (bool)left && (bool)right,
+                            "|" => (bool)left || (bool)right,
+                            "!" => (bool)left != (bool)right,
                             _ => throw new Exception("Unexpected operator: " + binExpr.Operator)
                         };
                     }
