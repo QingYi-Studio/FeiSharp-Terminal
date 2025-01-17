@@ -42,5 +42,6 @@ namespace FeiSharpStudio
         public static readonly string readkey = "readkey";
         public static readonly string ctype = "ctype";
         public static readonly string cstr = "cstr";
+        public static readonly string _astextbox = "astextbox";
     }
 }

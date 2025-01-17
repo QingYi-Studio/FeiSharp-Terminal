@@ -156,20 +156,46 @@ namespace FeiSharpStudio
                 {
                     ParseCStRStatement();
                 }
+                else if (MatchKeyword(TokenKeywords._astextbox))
+                {
+                    ParseAstextboxStatement();
+                }
                 else if (MatchFunction(Peek().Value))
                 {
                     RunFunction(Peek().Value);
                 }
                 else
                 {
+                    if(Check(TokenTypes.Identifier) && _classInfos.ContainsKey(Peek().Value))
                     Runclass(Peek().Value);
+                    else
+                    {
+                        Advance();
+                    }
                 }
-            } while (!IsAtEnd());
+            } while (!IsAtEnd() && (Peek().Type == TokenTypes.Keyword || _functions.ContainsKey(Peek().Value) || _classInfos.ContainsKey(Peek().Value)));
         }
         bool isfileassembly = false;
         bool isjsonassembly = false;
         bool isnetassembly = false;
         Dictionary<string,string> modals = new Dictionary<string,string>();
+        private void ParseAstextboxStatement()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string varname = EvaluateExpression(ParseExpression()).ToString();
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            string endValue = EvaluateExpression(ParseExpression()).ToString();
+            string alltext = "";
+            string readlinetxt = "";
+            readlinetxt = Console.ReadLine();
+            while (readlinetxt != endValue)
+            {
+                readlinetxt = Console.ReadLine();
+                alltext += readlinetxt;
+            }
+            _variables.Add(varname, alltext);
+            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+        }
         private void ParseCStRStatement()
         {
             if (!MatchPunctuation("(")) throw new Exception("Expected '('");
@@ -690,15 +716,18 @@ namespace FeiSharpStudio
             if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
             List<Token> tokens = new List<Token>();
             int indexC = 0;
-            for (int i = _current + 1; i < _tokens.Count; i++)
+            for (int i = _current + 2; i < _tokens.Count; i++)
             {
                 if (_tokens[i].Type == TokenTypes.Punctuation && _tokens[i].Value == "}")
                 {
                     indexC = i;
+                    Advance();
                     break;
                 }
                 tokens.Add(_tokens[i]);
+                Advance();
             }
+            Advance();
             while (a)
             {
                 _variables = Run(tokens, _variables);
@@ -729,6 +758,7 @@ namespace FeiSharpStudio
                 }
                 tokens.Add(_tokens[i]);
             }
+            Advance();
             if (a)
             {
                 _variables = Run(tokens, _variables);
@@ -1016,8 +1046,8 @@ namespace FeiSharpStudio
         {
             if (!MatchPunctuation("(")) throw new Exception("Expected '('");
             Expr expr = ParseExpression();
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+            Advance();
             return new PrintStmt(expr);
         }
 

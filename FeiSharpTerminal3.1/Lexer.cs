@@ -102,6 +102,7 @@ namespace FeiSharpStudio
                     else if (value == TokenKeywords.readkey) return new Token(TokenTypes.Keyword, "readkey");
                     else if (value == TokenKeywords.ctype) return new Token(TokenTypes.Keyword, "ctype");
                     else if (value == TokenKeywords.cstr) return new Token(TokenTypes.Keyword, "cstr");
+                    else if (value == TokenKeywords._astextbox) return new Token(TokenTypes.Keyword, "astextbox");
                     else if (value == TokenKeywords.func) { 
                         return new Token(TokenTypes.Keyword, "func"); 
                     }

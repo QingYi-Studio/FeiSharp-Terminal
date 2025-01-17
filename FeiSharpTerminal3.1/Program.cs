@@ -66,7 +66,7 @@ internal class Program
                 }
                 catch (Exception ex)
                 {
-                    if(ex.Message == "The given key 'exit' was not present in the dictionary.")
+                    if(ex.Message == "The given key 'exit' was not present in the dictionary." || ex.Message == "The given key ';' was not present in the dictionary.")
                     {
                         continue;
                     }
@@ -126,7 +126,7 @@ internal class Program
                 }
                 catch (Exception ex)
                 {
-                    if (ex.Message == "The given key 'exit' was not present in the dictionary.")
+                    if (ex.Message == "The given key 'exit' was not present in the dictionary." || ex.Message == "The given key ';' was not present in the dictionary.")
                     {
                         continue;
                     }
@@ -176,7 +176,7 @@ internal class Program
                 catch (Exception ex)
                 {
                     isvalid = false;
-                    if (ex.Message == "The given key 'exit' was not present in the dictionary.")
+                    if (ex.Message == "The given key 'exit' was not present in the dictionary." || ex.Message == "The given key ';' was not present in the dictionary.")
                     {
                         isvalid = true;
                         continue;
@@ -242,7 +242,7 @@ internal class Program
                 Directory.SetCurrentDirectory(_4);
                 File.AppendAllText("README.md", fb + "\\");
                 File.WriteAllText("a.bat","git add .\r\ngit commit -m \"Commit FeedBack.\"\r\ngit push");
-                Process.Start("cmd.exe",$"/c cd {Directory.GetCurrentDirectory()}\r\na.bat");
+                Process.Start("a.bat");
                 File.Delete("a.bat");
                 
             }
@@ -378,6 +378,15 @@ internal class Program
             }
             else if(command == "MessageBox-Show")
             {
+                string text = Console.ReadLine();
+                if(text.Length > 27)
+                {
+                    Console.WriteLine("MessageBox-Show.Text:String:This arg's length cannot > 27.+ArgsInvalidException at MessageBox-Show.cs line 28");
+                }
+                else
+                {
+                    Console.WriteLine($"MessageBox————————————————————————————\r\n|                            |——|口|×|\r\n|                                    |\r\n|         {text}{new string(' ', 27 - text.Length)}|\r\n|                                    |\r\n|                                    |\r\n|                                    |\r\n|                                    |\r\n——————————————————————————————————————\r\n");
+                }
             }
             else if(command == "Console-ClearAll")
             {
