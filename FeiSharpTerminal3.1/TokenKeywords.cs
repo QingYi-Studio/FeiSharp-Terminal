@@ -43,5 +43,13 @@ namespace FeiSharpStudio
         public static readonly string ctype = "ctype";
         public static readonly string cstr = "cstr";
         public static readonly string _astextbox = "astextbox";
+        public static readonly string createData = "createData";
+        public static readonly string addBundingData = "addBundingData";
+        public static readonly string addData = "addData";
+        public static readonly string delData = "delData";
+        public static readonly string replaceData = "replaceData";
+        public static readonly string saveDataChanges = "saveDataChanges";
+        public static readonly string invokeData = "invokeData";
+        public static readonly string getData = "getData";
     }
 }

@@ -47,6 +47,7 @@ namespace FeiSharpStudio
                 if (current == ';') { _index++; return new Token(TokenTypes.Punctuation, ";"); }
                 if (current == '(') { _index++; return new Token(TokenTypes.Punctuation, "("); }
                 if (current == ')') { _index++; return new Token(TokenTypes.Punctuation, ")"); }
+                if (current == '$') { _index++; return new Token(TokenTypes.Operator, "$"); }
                 if (current == '"')
                 {
                     int start = ++_index;
@@ -103,6 +104,14 @@ namespace FeiSharpStudio
                     else if (value == TokenKeywords.ctype) return new Token(TokenTypes.Keyword, "ctype");
                     else if (value == TokenKeywords.cstr) return new Token(TokenTypes.Keyword, "cstr");
                     else if (value == TokenKeywords._astextbox) return new Token(TokenTypes.Keyword, "astextbox");
+                    else if (value == TokenKeywords.createData) return new Token(TokenTypes.Keyword, "createData");
+                    else if (value == TokenKeywords.addBundingData) return new Token(TokenTypes.Keyword, "addBundingData");
+                    else if (value == TokenKeywords.addData) return new Token(TokenTypes.Keyword, "addData");
+                    else if (value == TokenKeywords.delData) return new Token(TokenTypes.Keyword, "delData");
+                    else if (value == TokenKeywords.replaceData) return new Token(TokenTypes.Keyword, "replaceData");
+                    else if (value == TokenKeywords.getData) return new Token(TokenTypes.Keyword, "getData");
+                    else if (value == TokenKeywords.saveDataChanges) return new Token(TokenTypes.Keyword, "saveDataChanges");
+                    else if (value == TokenKeywords.invokeData) return new Token(TokenTypes.Keyword, "invokeData");
                     else if (value == TokenKeywords.func) { 
                         return new Token(TokenTypes.Keyword, "func"); 
                     }

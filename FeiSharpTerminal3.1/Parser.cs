@@ -160,25 +160,136 @@ namespace FeiSharpStudio
                 {
                     ParseAstextboxStatement();
                 }
+                else if(MatchKeyword(TokenKeywords.createData))
+                {
+                    ParseCreateDataStatement();
+                }
+                else if (MatchKeyword(TokenKeywords.addData))
+                {
+                    ParseAddDataStatement();
+                }
+                else if (MatchKeyword(TokenKeywords.delData))
+                {
+                    ParseDelDataStatement();
+                }
+                else if (MatchKeyword(TokenKeywords.replaceData))
+                {
+                    ParseReplaceData();
+                }
+                else if (MatchKeyword(TokenKeywords.getData))
+                {
+                    ParseGetData();
+                }
+                else if (MatchKeyword(TokenKeywords.saveDataChanges))
+                {
+                    ParseSaveDataChange();
+                }
+                else if (MatchKeyword(TokenKeywords.invokeData))
+                {
+                    ParseInvokeData();
+                }
                 else if (MatchFunction(Peek().Value))
                 {
                     RunFunction(Peek().Value);
                 }
                 else
                 {
-                    if(Check(TokenTypes.Identifier) && _classInfos.ContainsKey(Peek().Value))
+                    if(_classInfos.ContainsKey(Peek().Value))
                     Runclass(Peek().Value);
                     else
                     {
                         Advance();
                     }
                 }
-            } while (!IsAtEnd() && (Peek().Type == TokenTypes.Keyword || _functions.ContainsKey(Peek().Value) || _classInfos.ContainsKey(Peek().Value)));
+            } while (!IsAtEnd());
         }
         bool isfileassembly = false;
         bool isjsonassembly = false;
         bool isnetassembly = false;
         Dictionary<string,string> modals = new Dictionary<string,string>();
+        private void ParseReplaceData()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            object value = EvaluateExpression(ParseExpression());
+            var vari = _variables[name].ToString();
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            vari = vari.Replace(value.ToString()+",", EvaluateExpression(ParseExpression()).ToString()+",");
+            _variables[name] = vari;
+            Advance();
+            Advance();
+        }
+        private void ParseSaveDataChange()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            string path = EvaluateExpression(ParseExpression()).ToString();
+            File.WriteAllText(path, _variables[name].ToString());
+            Advance();
+            Advance();
+        }
+        private void ParseInvokeData()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string path = EvaluateExpression(ParseExpression()).ToString();
+            if(Advance().Value != "as") throw new Exception("Expected 'as' keyword");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            _variables.Add(name, File.ReadAllText(path));
+            Advance();
+            Advance();
+        }
+        private void ParseGetData()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            string varname = EvaluateExpression(ParseExpression()).ToString();
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            int index = int.Parse(EvaluateExpression(ParseExpression()).ToString());
+            var datas = _variables[name].ToString().Split('{')[1].Split("}")[0].Split(',');
+            for (int i1 = 0; i1 < datas.Length; i1++) {
+                if(i1 == index)
+                {
+                    _variables.Add(varname, datas[i1]);
+                }
+            }
+            Advance();
+            Advance();
+        }
+        private void ParseCreateDataStatement()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            _variables.Add(name, "{}");
+            Advance();
+            Advance();
+        }
+        private void ParseAddDataStatement()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            object value = EvaluateExpression(ParseExpression());
+            var vari = _variables[name].ToString();
+            vari = vari.Insert(vari.Length - 1, value.ToString()+",");
+            _variables[name] = vari;
+            Advance();
+            Advance();
+        }
+        private void ParseDelDataStatement()
+        {
+            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            string name = EvaluateExpression(ParseExpression()).ToString();
+            if (!MatchPunctuation(",")) throw new Exception("Expected ','");
+            object value = EvaluateExpression(ParseExpression());
+            var vari = _variables[name].ToString();
+            vari = vari.Replace(value.ToString() + ",", "");
+            _variables[name] = vari;
+            Advance();
+            Advance();
+        }
         private void ParseAstextboxStatement()
         {
             if (!MatchPunctuation("(")) throw new Exception("Expected '('");
@@ -194,7 +305,8 @@ namespace FeiSharpStudio
                 alltext += readlinetxt;
             }
             _variables.Add(varname, alltext);
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+            Advance();
         }
         private void ParseCStRStatement()
         {
@@ -203,8 +315,8 @@ namespace FeiSharpStudio
             if (!MatchPunctuation(",")) throw new Exception("Expected ','");
             string varname = EvaluateExpression(ParseExpression()).ToString();
             _variables.Add(varname, convertItem.ToString());
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseCTypeStatement()
         {
@@ -239,8 +351,8 @@ namespace FeiSharpStudio
             {
                 _variables.Add(varname, bool.Parse(convertedItem.ToString()));
             }
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseReadLineStatement()
         {
@@ -254,8 +366,8 @@ namespace FeiSharpStudio
             {
                 _variables.Add(name,Console.ReadLine());
             }
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseReadKeyStatement()
         {
@@ -271,8 +383,8 @@ namespace FeiSharpStudio
                 .Add(name, Console.ReadKey().KeyChar.ToString());
             }
             Console.WriteLine();
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseDefineStatement()
         {
@@ -325,33 +437,31 @@ namespace FeiSharpStudio
                 OnOutputEvent(new(context+": It is not a correct DEFINE_OBJ.DEFiNE_OBJ is must be 'modal', 'view' or 'edit'."));
                 Advance();
             }
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+Advance();
         }
         private void ParseAnnotationStatement()
         {
             if (!MatchPunctuation("(")) throw new Exception("Expected '('");
             string context = EvaluateExpression(ParseExpression()).ToString();
             Debug.WriteLine("code annotation:" + context);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseImportStatement()
         {
-            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
             string assembly = EvaluateExpression(ParseExpression()).ToString();
-            if (assembly == "file") { 
+            if (assembly == "FeiSharp.IO") { 
                 isfileassembly = true;
             }
-            else if(assembly == "json")
+            else if(assembly == "FeiSharp.Json")
             {
                 isjsonassembly = true;
             }
-            else if (assembly == "net")
+            else if (assembly == "FeiSharp.Net.Http")
             {
                 isnetassembly = true;
             }
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
         }
         private void ParseReadStatement()
         {
@@ -361,7 +471,7 @@ namespace FeiSharpStudio
                 string varname = EvaluateExpression(ParseExpression()).ToString();
                 if (!MatchPunctuation(",")) throw new Exception("Expected ','");
                 string path = EvaluateExpression(ParseExpression()).ToString();
-                if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
+                Advance();
                 try
                 {
                     _variables.Add(varname, File.ReadAllText(path));
@@ -370,11 +480,11 @@ namespace FeiSharpStudio
                 {
                     _variables[varname] = File.ReadAllText(path);
                 }
-                if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+    Advance();
             }
             else
             {
-                throw new Exception("the text \"read\" is not a context var function or readonlyclass name.(are you missing import assembly:file?)");
+                throw new Exception("the text \"read\" is not a context var function or readonlyclass name.(are you missing import assembly:FeiSharp.IO?)");
             }
         }
         private KeyValuePair<string,bool> Runclass(string name)
@@ -409,8 +519,8 @@ namespace FeiSharpStudio
                     {
                         funcorvarname = Peek().Value;
                         isFunc = false;
-                    }
                 }
+                    }
             }
             return new(funcorvarname,isFunc);
         }
@@ -465,8 +575,8 @@ namespace FeiSharpStudio
                 {
                     _variables[varname] = (object)(bool1 && bool2);
                 }
-                if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-                if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+                Advance();
+    Advance();
             }
             else if(uuid == UUIDData.OrUUID)
             {
@@ -484,8 +594,8 @@ namespace FeiSharpStudio
                 {
                     _variables[varname] = (object)(bool1 || bool2);
                 }
-                if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-                if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+                Advance();
+    Advance();
             }
             else if (uuid == UUIDData.NotUUID)
             {
@@ -501,8 +611,8 @@ namespace FeiSharpStudio
                 {
                     _variables[varname] = (object)(!bool1);
                 }
-                if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-                if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+                Advance();
+    Advance();
             }
         }
         private void ParseGetJsonFilePathStatement()
@@ -512,8 +622,8 @@ namespace FeiSharpStudio
                 if (!MatchPunctuation("(")) throw new Exception("Expected '('");
                 string a = File.ReadAllText(EvaluateExpression(ParseExpression()).ToString());
                 Console.WriteLine(a);
-                if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-                if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+                Advance();
+    Advance();
             }
             else
             {
@@ -542,8 +652,8 @@ namespace FeiSharpStudio
                 {
                     _variables[a] = content;
                 }
-                if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-                if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+                Advance();
+    Advance();
             }
             else
             {
@@ -558,19 +668,16 @@ namespace FeiSharpStudio
 
         private void ParseThrowStatement()
         {
-            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
-            Exception? ex = new();
-            try
+            string msg = EvaluateExpression(ParseExpression()).ToString();
+            Console.WriteLine("Application: FeiSharp.Exception went throw at throw ststement, "+msg+" Maybe this application's some value is invalid or some args is invalid.");
+            Console.Write("Do you want to continue and skip it?(y/n)");
+            var a = Console.ReadKey();
+            Console.WriteLine();
+            if(a.Key == ConsoleKey.N)
             {
-                ex = (Exception)Activator.CreateInstance(Type.GetType("System." + Peek().Value));
+                throw new Exception("This application is stop......");
             }
-            catch
-            {
-                throw new Exception("This type isn't inherit Exception.");
-            }
-            throw (ex);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
         }
         private void ParseDowhileStatement()
         {
@@ -578,7 +685,7 @@ namespace FeiSharpStudio
             int current = _current;
             string b = EvaluateExpression(ParseExpression()).ToString();
             bool a = bool.Parse(b);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
+            Advance();
             List<Token> tokens = new List<Token>();
             int indexC = 0;
             for (int i = _current + 1; i < _tokens.Count; i++)
@@ -713,10 +820,11 @@ namespace FeiSharpStudio
             int current = _current;
             string b = EvaluateExpression(ParseExpression()).ToString();
             bool a = bool.Parse(b);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
+            Advance();
+            Advance();
             List<Token> tokens = new List<Token>();
             int indexC = 0;
-            for (int i = _current + 2; i < _tokens.Count; i++)
+            for (int i = _current; i < _tokens.Count; i++)
             {
                 if (_tokens[i].Type == TokenTypes.Punctuation && _tokens[i].Value == "}")
                 {
@@ -742,7 +850,7 @@ namespace FeiSharpStudio
             int current = _current;
             string b = EvaluateExpression(ParseExpression()).ToString();
             bool a = bool.Parse(b);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
+            Advance();
             List<Token> tokens = new List<Token>();
             int indexC = 0;
             for (int i = _current + 1; i < _tokens.Count; i++)
@@ -783,8 +891,8 @@ namespace FeiSharpStudio
             {
                 throw new Exception("Invalid string for \"helper\" keyword: " + a);
             }
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseABEStatement()
         {
@@ -796,8 +904,8 @@ namespace FeiSharpStudio
             double c = double.Parse(EvaluateExpression(ParseExpression()).ToString());
             if (!MatchPunctuation(",")) throw new Exception("Expected ','");
             double d = double.Parse(EvaluateExpression(ParseExpression()).ToString());
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
             try
             {
                 _variables.Add(a, (b + c + d) / 3);
@@ -818,7 +926,7 @@ namespace FeiSharpStudio
             {
                 _variables[name] = Stopwatch.Elapsed.TotalSeconds;
             }
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+Advance();
         }
         string name = "";
         private void ParseWatchStartStatement()
@@ -826,19 +934,19 @@ namespace FeiSharpStudio
             if (!MatchPunctuation("(")) throw new Exception("Expected '('");
             Stopwatch = Stopwatch.StartNew();
             name = EvaluateExpression(ParseExpression()).ToString();
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseWaitStatement()
         {
             if (!MatchPunctuation("(")) throw new Exception("Expected '('");
             Thread.Sleep(int.Parse(EvaluateExpression(ParseExpression()).ToString()) * 1000);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseStopStatement()
         {
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+Advance();
             OnOutputEvent(new OutputEventArgs("Application is stop..."));
             foreach (var item in _variables)
             {
@@ -856,8 +964,8 @@ namespace FeiSharpStudio
             Expr b = ParseExpression();
             string a = (string)EvaluateExpression(b);
             Process.Start(a);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseExportStatement()
         {
@@ -868,8 +976,8 @@ namespace FeiSharpStudio
             Expr b1 = ParseExpression();
             string a1 = (string)EvaluateExpression(b1);
             File.AppendAllText(a, a1);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         private void ParseRunStatement()
         {
@@ -877,8 +985,8 @@ namespace FeiSharpStudio
             Expr b = ParseExpression();
             string a = (string)EvaluateExpression(b);
             Run(File.ReadAllText(a));
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
         }
         internal void Run(string code)
         {
@@ -984,8 +1092,8 @@ namespace FeiSharpStudio
             if (!MatchPunctuation(",")) throw new Exception("Expected ','");
             string name = EvaluateExpression(ParseExpression()).ToString();
             Expr expr2 = new VarExpr(name);
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
             _variables[((VarExpr)expr).Name] = ((VarExpr)expr2).Name;
         }
         private void ParseInitStatement()
@@ -994,8 +1102,8 @@ namespace FeiSharpStudio
             Expr expr = GetVar();
             if (!MatchPunctuation(",")) throw new Exception("Expected ','");
             Expr expr2 = GetType();
-            if (!MatchPunctuation(")")) throw new Exception("Expected ')'");
-            if (!MatchPunctuation(";")) throw new Exception("Expected ';'");
+            Advance();
+Advance();
             _variables.Add(((VarExpr)expr).Name, InitValue(((VarExpr)expr2).Name));
         }
         private object InitValue(string type)
@@ -1030,21 +1138,106 @@ namespace FeiSharpStudio
             {
                 throw new Exception("Expected '=' after variable name");
             }
-
-            Expr expr = ParseExpression();
-
-            if (!MatchPunctuation(";"))
+            
+            if(Peek().Value == "new" && Peek().Type == TokenTypes.Identifier)
             {
-                throw new Exception("Expected ';' after variable declaration");
+                Advance();
+                foreach(var item in _classInfos)
+                {
+                    string classname = Peek().Value;
+                    if(classname == item.Key)
+                    {
+                        Advance();
+                        List<string> parameters = new List<string>();
+                        while (Peek().Value != ")")
+                        {
+                            if (Peek().Value == "," || Peek().Value == "(")
+                            {
+                                Advance();
+                                continue;
+                            }
+                            else
+                            {
+                                parameters.Add(Peek().Value);
+                                Advance();
+                            }
+                        }
+                        List<Token> tokens = new List<Token>();
+                        Lexer lexer;
+                        if(parameters.Count == 0)
+                        {
+                            lexer = new($"{classname}.init;");
+                        }
+                        else
+                        {
+                            string a = "";
+                            for (int i = 0; i < parameters.Count; i++)
+                            {
+                                string? item1 = parameters[i];
+                                if(i == parameters.Count - 1)
+                                {
+                                    a += item1;
+                                }
+                                else
+                                {
+                                    a += item1 + ",";
+                                }
+                            }
+                            lexer = new($"{classname}.init({a});");
+                        }
+                        Token token;
+                        do
+                        {
+                            token = lexer.NextToken();
+                            tokens.Add(token);
+                        }
+                        while (token.Type != TokenTypes.EndOfFile);
+                        Parser parser = new(tokens);
+                        parser._classInfos = _classInfos;
+                        parser.ParseStatements();
+                        Dictionary<string,object> _vars = new Dictionary<string,object>();
+                        foreach(var item2 in parser._classInfos[classname]._Vars)
+                        {
+                            _vars.Add(item2.Key, item2.Value);
+                        }
+                        _classInfos.Add(varName,new(item.Value._FunctionInfo,_vars,varName));
+                        break;
+                    }
+                }
+                Advance();
+                Advance();
             }
+            else
+            {
+                Expr expr = ParseExpression();
+                if (!MatchPunctuation(";"))
+                {
+                    throw new Exception("Expected ';' after variable declaration");
+                }
 
-            object value = EvaluateExpression(expr);
-            _variables[varName] = value;
+                object value = EvaluateExpression(expr);
+                _variables[varName] = value;
+            }
         }
 
         private PrintStmt ParsePrintStatement()
         {
-            if (!MatchPunctuation("(")) throw new Exception("Expected '('");
+            if (!MatchPunctuation("("))
+            {
+                _current--;
+                string text = EvaluateExpression(ParseExpression()).ToString();
+                if (Peek().Value == "as")
+                {
+                    Advance();
+                    string path = EvaluateExpression(ParseExpression()).ToString();
+                    Advance();
+                    File.WriteAllText(path, text);
+                }
+                else
+                {
+                    OnOutputEvent(new("No 'as' keyword."));
+                }
+            }
             Expr expr = ParseExpression();
             Advance();
             Advance();
@@ -1054,7 +1247,7 @@ namespace FeiSharpStudio
         private Expr ParseExpression()
         {
             Expr expr = ParsePrimary();
-            while (MatchOperator("+", "-", "*", "/", "|", "^", "<", ">", "=", "!","|","&"))
+            while (MatchOperator("+", "-", "*", "/", "|", "^", "<", ">", "=", "!","|","&", "$"))
             {
                 string op = Previous().Value;
                 Expr right = ParsePrimary();
@@ -1346,6 +1539,7 @@ namespace FeiSharpStudio
                         "<" => (double)left < (double)right,
                         "=" => (double)left == (double)right,
                         "!" => (double)left != (double)right,
+                        "$" => 1 / (double)left,
                         _ => throw new Exception("Unexpected operator: " + binExpr.Operator)
                     };
                 case StringExpr stringExpr:

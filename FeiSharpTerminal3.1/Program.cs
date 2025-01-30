@@ -14,7 +14,17 @@ internal class Program
 {
     static void Main(string[] args)
     {
-
+        //double b = 0;
+        //double c = 0;
+        //b = 1 / 1;
+        //for (double i = 1; i <= 1e+10; i++)
+        //{
+        //    b = 1.0 / (Math.Pow(i, 2));
+        //    c = c + b;
+        //}
+        //c *= 6;
+        //c = Math.Pow(c, 0.5);
+        //Console.WriteLine(c);
         ushort uIntptrID = ushort.Parse(FeiSharpTerminal3._1.Properties.Resources.ConsoleGrayNumber);
         Console.Title = "FeiSharp Terminal 8.0";
         Console.WriteLine("FeiSharp 8.0 (tags/v8.0:0671451, Jan 6 2025, 20:58:14) [MSC v.1942 64 bit (AMD64)] on win32\r\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.");
