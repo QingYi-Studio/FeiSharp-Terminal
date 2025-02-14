@@ -1,46 +1,71 @@
-﻿using FeiSharpStudio;
-using System.Diagnostics;
-using System.Net.Mail;
+﻿using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-
+using FeiSharpStudio;
 namespace FeiSharp8._5RuntimeSdk;
 
 using FeiSharpTerminal3._1;
-using System.Management;
-using System.Net.WebSockets;
+using FeiSharpTerminal3._1.ThinkGeo;
+using Spectre.Console;
 
 internal class Program
 {
+    private readonly static global::System.UInt16 UINT16_WINDOWS_X64_COLOR_ID_GREY = global::System.UInt16.Parse(FeiSharpTerminal3._1.Properties.Resources.ConsoleGrayNumber);
     static void Main(string[] args)
     {
-        //double b = 0;
-        //double c = 0;
-        //b = 1 / 1;
-        //for (double i = 1; i <= 1e+10; i++)
-        //{
-        //    b = 1.0 / (Math.Pow(i, 2));
-        //    c = c + b;
-        //}
-        //c *= 6;
-        //c = Math.Pow(c, 0.5);
-        //Console.WriteLine(c);
-        ushort uIntptrID = ushort.Parse(FeiSharpTerminal3._1.Properties.Resources.ConsoleGrayNumber);
+        #region <head></head>
+        //head
+        global::System.UInt16 uIntptrID = UINT16_WINDOWS_X64_COLOR_ID_GREY;
         Console.Title = "FeiSharp Terminal 8.0";
         Console.WriteLine("FeiSharp 8.0 (tags/v8.0:0671451, Jan 6 2025, 20:58:14) [MSC v.1942 64 bit (AMD64)] on win32\r\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.");
+        //end head
+        #endregion
+        if (args.Length > 0) {
+            global::System.String sourceCode = File.ReadAllText(args[1]);
+            Lexer lexer = new(sourceCode);
+            List<Token> tokens = [];
+            Token token;
+            do
+            {
+                token = lexer.NextToken();
+
+                tokens.Add(token);
+            } while (token.Type != TokenTypes.EndOfFile);
+            Parser parser = new(tokens);
+            parser.OutputEvent += (s, e) =>
+            {
+                Console.WriteLine(e.Message);
+            };
+            try
+            {
+                parser.ParseStatements();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "The given key 'exit' was not present in the dictionary." || ex.Message == "The given key ';' was not present in the dictionary.")
+                {
+                }
+                else
+                {
+                    Console.WriteLine("Parsing error: " + ex.Message);
+                }
+            }
+            Console.WriteLine("Press any key to continue......");
+            Console.ReadKey();
+        }
         while (true)
         {
-            CustomConsole.WriteGray(">>>", uIntptrId:uIntptrID);
-            string command = Console.ReadLine();
+            CustomConsole.WRITE_GREY_WITHOUT_LINE(">>>", WIN_X64_UINT16_PTR_FOR_16BYTES:uIntptrID);
+           global::System.String command = Console.ReadLine();
             if (command == "exit")
             {
-                Environment.Exit(0);
+                global::System.Environment.Exit(0);
             }
             else if (command.Contains("run"))
             {
                 Console.WriteLine(">>>\"Input these codes......Enter 'exit' to exit this mode......\"");
-                string code = "";
-                string scode = "";
+               global::System.String code = "";
+               global::System.String scode = "";
                 while (code != "exit")
                 {
                     if (code != "exit")
@@ -54,7 +79,7 @@ internal class Program
                         break;
                     }
                 }
-                string sourceCode = scode;
+               global::System.String sourceCode = scode;
                 Lexer lexer = new(sourceCode);
                 List<Token> tokens = [];
                 Token token;
@@ -87,6 +112,27 @@ internal class Program
             {
                 Console.Beep();
             }
+            else if (command == "Run-WindowsPUI")
+            {
+                Console.WriteLine(">>>\"Input these codes......Enter 'exit' to exit this mode......\"");
+                global::System.String code = "";
+                global::System.String scode = "";
+                while (code != "exit")
+                {
+                    if (code != "exit")
+                    {
+                        code = Console.ReadLine();
+                        scode += code;
+                    }
+                    else
+                    {
+                        Console.WriteLine(">>>:\"User enter the 'exit' to exit this mode at \"" + DateTime.Now);
+                        break;
+                    }
+                }
+                File.WriteAllText(@"C:\Users\benba\Documents\UI-Parser-TO_CODE_#UI#FEIFEI_L_DATE9.FROMCODETXT", scode);
+                Process.Start("WindowsPUI.exe");
+            }
             else if(command == "Introduction-Started")
             {
                 Console.WriteLine(Introduction.GetIntroduction());
@@ -115,7 +161,7 @@ internal class Program
             else if (command.Contains("file"))
             {
                 Console.WriteLine(">>>:\"Input the path......\"");
-                string sourceCode = File.ReadAllText(Console.ReadLine());
+               global::System.String sourceCode = File.ReadAllText(Console.ReadLine());
                 Lexer lexer = new(sourceCode);
                 List<Token> tokens = [];
                 Token token;
@@ -146,8 +192,8 @@ internal class Program
             else if (command.Contains("nsbuild"))
             {
                 Console.WriteLine(">>>:\"Input these codes......Enter 'exit' to exit this mode......\"");
-                string code = "";
-                string scode = "";
+               global::System.String code = "";
+               global::System.String scode = "";
                 while (code != "exit")
                 {
                     if (code != "exit")
@@ -161,7 +207,7 @@ internal class Program
                         break;
                     }
                 }
-                string sourceCode = scode;
+               global::System.String sourceCode = scode;
                 Lexer lexer = new(sourceCode);
                 List<Token> tokens = [];
                 Token token;
@@ -196,11 +242,11 @@ internal class Program
                 if (isvalid)
                 {
                     Console.WriteLine("Your code is correct, will you save the code?(y/n)");
-                    string yn = Console.ReadLine();
+                   global::System.String yn = Console.ReadLine();
                     if (yn == "y")
                     {
                         Console.WriteLine(">>>:\"Please enter the file path:\"");
-                        string path = Console.ReadLine();
+                       global::System.String path = Console.ReadLine();
                         bool isarg = true;
                         try
                         {
@@ -241,14 +287,14 @@ internal class Program
             else if (command == "feedback")
             {
                 Console.WriteLine("Please write a feedback:");
-                string fb = Console.ReadLine();
-                string _1 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+               global::System.String fb = Console.ReadLine();
+               global::System.String _1 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                 Directory.SetCurrentDirectory(_1);
-                string _2 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+               global::System.String _2 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                 Directory.SetCurrentDirectory(_2);
-                string _3 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+               global::System.String _3 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                 Directory.SetCurrentDirectory(_3);
-                string _4 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+               global::System.String _4 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                 Directory.SetCurrentDirectory(_4);
                 File.AppendAllText("README.md", fb + "\\");
                 File.WriteAllText("a.bat","git add .\r\ngit commit -m \"Commit FeedBack.\"\r\ngit push");
@@ -321,7 +367,7 @@ internal class Program
             }
             else if(command == "Get-HelpInformation")
             {
-                Console.WriteLine(" Welcome to FeiSharp 8.0's help utility! If this is your first time using\r\nFeiSharp, You should view the GitHub website: https://github.com/Mars-FeiFei/FeiSharp-Terminal or the WinForm Edition https://github.com/Mars-FeiFei/FeiSharp/tree/WinFormDotnet8\r\n\r\nEach module also comes with a one-line summary of what it does; to list\r\nthe modules whose name or summary contain a given string such as \"spam\",\r\nenter \"modules spam\".\r\n\r\nTo quit this help utility and return to the interpreter,\r\nenter \"exit\".");
+                Console.WriteLine(" Welcome to FeiSharp 8.0's help utility! If this is your first time using\r\nFeiSharp, You should view the GitHub website: https://github.com/Mars-FeiFei/FeiSharp-Terminal or the WinForm Edition https://github.com/Mars-FeiFei/FeiSharp/tree/WinFormDotnet8\r\n\r\nEach module also comes with a one-line summary of what it does; to list\r\nthe modules whose name or summary contain a givenglobal::System.String such as \"spam\",\r\nenter \"modules spam\".\r\n\r\nTo quit this help utility and return to the interpreter,\r\nenter \"exit\".");
             }
             else if(command == "Get-CreditsInformation")
             {
@@ -362,14 +408,13 @@ internal class Program
             else if(command == "Use-File")
             {
                 Console.WriteLine(">>>:\"Input the path......\"");
-                string sourceCode = File.ReadAllText(Console.ReadLine());
+               global::System.String sourceCode = File.ReadAllText(Console.ReadLine());
                 Lexer lexer = new(sourceCode);
                 List<Token> tokens = [];
                 Token token;
                 do
                 {
                     token = lexer.NextToken();
-
                     tokens.Add(token);
                 } while (token.Type != TokenTypes.EndOfFile);
                 Parser parser = new(tokens);
@@ -388,15 +433,10 @@ internal class Program
             }
             else if(command == "MessageBox-Show")
             {
-                string text = Console.ReadLine();
-                if(text.Length > 27)
-                {
-                    Console.WriteLine("MessageBox-Show.Text:String:This arg's length cannot > 27.+ArgsInvalidException at MessageBox-Show.cs line 28");
-                }
-                else
-                {
-                    Console.WriteLine($"MessageBox————————————————————————————\r\n|                            |——|口|×|\r\n|                                    |\r\n|         {text}{new string(' ', 27 - text.Length)}|\r\n|                                    |\r\n|                                    |\r\n|                                    |\r\n|                                    |\r\n——————————————————————————————————————\r\n");
-                }
+                global::System.String text = Console.ReadLine();
+                AnsiConsole.MarkupLine("[grey]asdasdasd[/]");
+                AnsiConsole.Prompt(
+                new TextPrompt<string>(text));
             }
             else if(command == "Console-ClearAll")
             {
@@ -404,7 +444,7 @@ internal class Program
             }
             else if (command.Contains("license"))
             {
-                string arg1 = command.Split(' ')[1];
+               global::System.String arg1 = command.Split(' ')[1];
                 if (arg1 == "--type")
                 {
                     Console.WriteLine("Apache License");
@@ -420,7 +460,7 @@ internal class Program
             }
             else if (command == "base")
             {
-                Console.WriteLine("FeiSharp is based from C# .Net 8.0\r\nBased Picture: FeiSharp -> C# .Net 8.0 -> Microsoft IL -> BIN Code(010100......)");
+                Console.WriteLine("FeiSharp is based from C# .Net 8.0\r\nBased Picture: FeiSharp Terminal 8.0 -> C# .Net 8.0 -> Microsoft IL -> BIN Code(010100......)");
             }
             else if (command == "credits")
             {
@@ -428,7 +468,7 @@ internal class Program
             }
             else if (command == "help")
             {
-                Console.WriteLine(" Welcome to FeiSharp 8.0's help utility! If this is your first time using\r\nFeiSharp, You should view the GitHub website: https://github.com/Mars-FeiFei/FeiSharp-Terminal or the WinForm Edition https://github.com/Mars-FeiFei/FeiSharp/tree/WinFormDotnet8\r\n\r\nEach module also comes with a one-line summary of what it does; to list\r\nthe modules whose name or summary contain a given string such as \"spam\",\r\nenter \"modules spam\".\r\n\r\nTo quit this help utility and return to the interpreter,\r\nenter \"exit\".");
+                Console.WriteLine(" Welcome to FeiSharp 8.0's help utility! If this is your first time using\r\nFeiSharp, You should view the GitHub website: https://github.com/Mars-FeiFei/FeiSharp-Terminal or the WinForm Edition https://github.com/Mars-FeiFei/FeiSharp/tree/WinFormDotnet8\r\n\r\nEach module also comes with a one-line summary of what it does; to list\r\nthe modules whose name or summary contain a givenglobal::System.String such as \"spam\",\r\nenter \"modules spam\".\r\n\r\nTo quit this help utility and return to the interpreter,\r\nenter \"exit\".");
             }
             else
             {
@@ -443,7 +483,7 @@ internal class Program
                 };
                 process.StartInfo = startInfo;
                 process.Start();
-                string output = process.StandardOutput.ReadToEnd();
+               global::System.String output = process.StandardOutput.ReadToEnd();
                 process.WaitForExit();
                 if (string.IsNullOrEmpty(output))
                 {
@@ -458,7 +498,7 @@ internal class Program
                     };
                     process1.StartInfo = startInfo1;
                     process1.Start();
-                    string output1 = process1.StandardOutput.ReadToEnd();
+                   global::System.String output1 = process1.StandardOutput.ReadToEnd();
                     process1.WaitForExit();
                     Console.WriteLine(output1);
                 }
@@ -484,20 +524,19 @@ internal class Program
 }
 public class CustomConsole
 {
-    [DllImport("kernel32.dll")]
-    static extern bool SetConsoleTextAttribute(IntPtr hConsoleOutput, ushort wAttributes);
-    const int STD_OUTPUT_HANDLE = -11;
-    [DllImport("kernel32.dll")]
-    static extern IntPtr GetStdHandle(int nStdHandle);
-
-    public static void WriteGray(string text,ushort uIntptrId)
+    [global::System.Runtime.InteropServices.DllImport("kernel32.dll")]
+    private static extern global::System.Boolean SetConsoleTextAttribute(global::System.IntPtr WIN_X32_INTEGER32_PTR_H_CONSOLE_OUTPUT_ID_FOR_32BYTES, global::System.UInt16 WIN_X32_UINT16_ATTRIBUTES_FOR_16BYTES);
+    public const global::System.Int32 WIN_X64_INT32_STD_OUTPUT_HANDLE_ID_FOR_32BYTES = -11;
+    [global::System.Runtime.InteropServices.DllImport("kernel32.dll")]
+    private static extern global::System.IntPtr GetStdHandle(global::System.Int32 WIN_X64_INTEGER32_N_STD_HANDLE_FOR_32BYTES);
+    public static void WRITE_GREY_WITHOUT_LINE(global::System.String STR_UCODE_12_TEXT, global::System.UInt16 WIN_X64_UINT16_PTR_FOR_16BYTES)
     {
-        IntPtr consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-        ushort grayColor = uIntptrId;
-        SetConsoleTextAttribute(consoleHandle, grayColor);
-        Console.Write(text);
-        ushort defaultColor = 7;
-        SetConsoleTextAttribute(consoleHandle, defaultColor);
+        global::System.IntPtr consoleHandle = GetStdHandle(WIN_X64_INT32_STD_OUTPUT_HANDLE_ID_FOR_32BYTES);
+        global::System.UInt16 grayColor = WIN_X64_UINT16_PTR_FOR_16BYTES;
+        global::FeiSharp8._5RuntimeSdk.CustomConsole.SetConsoleTextAttribute(consoleHandle, grayColor);
+        global::System.Console.Write(STR_UCODE_12_TEXT);
+        global::System.UInt16 defaultColor = 7;
+        global::FeiSharp8._5RuntimeSdk.CustomConsole.SetConsoleTextAttribute(consoleHandle, defaultColor);
     }
 }
 

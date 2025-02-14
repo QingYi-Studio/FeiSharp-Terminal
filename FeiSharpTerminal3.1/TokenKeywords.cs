@@ -31,7 +31,7 @@ namespace FeiSharpStudio
         public static readonly string _throw = "throw";
         public static readonly string _return = "return";
         public static readonly string getVarsFromJsonFilePath = "getVarsFromJsonFilePath";
-        public static readonly string readonlyclass = "readonlyclass";
+        public static readonly string readonlyclass = "class";
         public static readonly string invoke = "invoke";
         public static readonly string func = "func";
         public static readonly string read = "read";
@@ -51,5 +51,9 @@ namespace FeiSharpStudio
         public static readonly string saveDataChanges = "saveDataChanges";
         public static readonly string invokeData = "invokeData";
         public static readonly string getData = "getData";
+        public static readonly string createInstance = "createInstance";
+        public static readonly string setClassVar = "setClassVar";
+        public static readonly string setBaseClass = "setBaseClass";
+        public static readonly string printMethod = "printMethod";
     }
 }

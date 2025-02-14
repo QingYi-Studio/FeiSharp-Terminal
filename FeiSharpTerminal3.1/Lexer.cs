@@ -93,7 +93,7 @@ namespace FeiSharpStudio
                     else if (value == TokenKeywords._throw) return new Token(TokenTypes.Keyword, "throw");
                     else if (value == TokenKeywords._return) return new Token(TokenTypes.Keyword, "return");
                     else if (value == TokenKeywords.getVarsFromJsonFilePath) return new Token(TokenTypes.Keyword, "getVarsFromJsonFilePath");
-                    else if (value == TokenKeywords.readonlyclass) return new Token(TokenTypes.Keyword, "readonlyclass");
+                    else if (value == TokenKeywords.readonlyclass) return new Token(TokenTypes.Keyword, "class");
                     else if (value == TokenKeywords.invoke) return new Token(TokenTypes.Keyword, "invoke");
                     else if (value == TokenKeywords.read) return new Token(TokenTypes.Keyword, "read");
                     else if (value == TokenKeywords.import) return new Token(TokenTypes.Keyword, "import");
@@ -112,6 +112,10 @@ namespace FeiSharpStudio
                     else if (value == TokenKeywords.getData) return new Token(TokenTypes.Keyword, "getData");
                     else if (value == TokenKeywords.saveDataChanges) return new Token(TokenTypes.Keyword, "saveDataChanges");
                     else if (value == TokenKeywords.invokeData) return new Token(TokenTypes.Keyword, "invokeData");
+                    else if (value == TokenKeywords.createInstance) return new Token(TokenTypes.Keyword, "createInstance");
+                    else if (value == TokenKeywords.setClassVar) return new Token(TokenTypes.Keyword, "setClassVar");
+                    else if (value == TokenKeywords.setBaseClass) return new Token(TokenTypes.Keyword, "setBaseClass");
+                    else if (value == TokenKeywords.setClassVar) return new Token(TokenTypes.Keyword,"setBaseClass");
                     else if (value == TokenKeywords.func) { 
                         return new Token(TokenTypes.Keyword, "func"); 
                     }
