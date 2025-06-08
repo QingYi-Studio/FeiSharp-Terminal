@@ -566,7 +566,7 @@ namespace FeiSharp8._5RuntimeSdk
             {
                 using (Ping ping = new Ping())
                 {
-                    PingReply reply = ping.Send("8.8.8.8", 1000); // Ping Google DNS
+                    PingReply reply = ping.Send("119.29.29.29", 1000); // Ping Tencent DNS
                     return reply.Status == IPStatus.Success;
                 }
             }
