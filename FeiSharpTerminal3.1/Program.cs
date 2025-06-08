@@ -451,7 +451,7 @@ namespace FeiSharp8._5RuntimeSdk
                     Console.ReadKey();
                     Console.WriteLine();
                 }
-                else if (command == "Console-SetDefaultColor")
+                else if (command == "Console-SetDefaultColor" || command == "Console-ResetColor")
                 {
                     Console.ResetColor();
                 }
