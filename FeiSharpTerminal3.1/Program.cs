@@ -11,18 +11,18 @@ namespace FeiSharp8._5RuntimeSdk
 {
     internal class Program
     {
-        private readonly static global::System.UInt16 UINT16_WINDOWS_X64_COLOR_ID_GREY = global::System.UInt16.Parse(FeiSharpTerminal3._1.Properties.Resources.ConsoleGrayNumber);
+        private readonly static ushort UINT16_WINDOWS_X64_COLOR_ID_GREY = global::System.UInt16.Parse(FeiSharpTerminal3._1.Properties.Resources.ConsoleGrayNumber);
         static void Main(string[] args)
         {
             #region <head></head>
             //head
-            global::System.UInt16 uIntptrID = UINT16_WINDOWS_X64_COLOR_ID_GREY;
+            ushort uIntptrID = UINT16_WINDOWS_X64_COLOR_ID_GREY;
             Console.Title = "FeiSharp Terminal 8.0";
             Console.WriteLine("FeiSharp 8.0 (tags/v8.0:0671451, Jan 6 2025, 20:58:14) [MSC v.1942 64 bit (AMD64)] on win32\r\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.");
             //end head
             #endregion
             if (args.Length > 0) {
-                global::System.String sourceCode = File.ReadAllText(args[1]);
+                string sourceCode = File.ReadAllText(args[1]);
                 Lexer lexer = new(sourceCode);
                 List<Token> tokens = [];
                 Token token;
@@ -57,7 +57,7 @@ namespace FeiSharp8._5RuntimeSdk
             while (true)
             {
                 CustomConsole.WRITE_GREY_WITHOUT_LINE(">>>", WIN_X64_UINT16_PTR_FOR_16BYTES:uIntptrID);
-               global::System.String command = Console.ReadLine();
+               string command = Console.ReadLine();
                 if (command == "exit")
                 {
                     global::System.Environment.Exit(0);
@@ -65,8 +65,8 @@ namespace FeiSharp8._5RuntimeSdk
                 else if (command.Contains("run"))
                 {
                     Console.WriteLine(">>>\"Input these codes......Enter 'exit' to exit this mode......\"");
-                   global::System.String code = "";
-                   global::System.String scode = "";
+                   string code = "";
+                   string scode = "";
                     while (code != "exit")
                     {
                         if (code != "exit")
@@ -80,7 +80,7 @@ namespace FeiSharp8._5RuntimeSdk
                             break;
                         }
                     }
-                   global::System.String sourceCode = scode;
+                   string sourceCode = scode;
                     Lexer lexer = new(sourceCode);
                     List<Token> tokens = [];
                     Token token;
@@ -116,8 +116,8 @@ namespace FeiSharp8._5RuntimeSdk
                 else if (command == "Run-WindowsPUI")
                 {
                     Console.WriteLine(">>>\"Input these codes......Enter 'exit' to exit this mode......\"");
-                    global::System.String code = "";
-                    global::System.String scode = "";
+                    string code = "";
+                    string scode = "";
                     while (code != "exit")
                     {
                         if (code != "exit")
@@ -162,7 +162,7 @@ namespace FeiSharp8._5RuntimeSdk
                 else if (command.Contains("file"))
                 {
                     Console.WriteLine(">>>:\"Input the path......\"");
-                   global::System.String sourceCode = File.ReadAllText(Console.ReadLine());
+                   string sourceCode = File.ReadAllText(Console.ReadLine());
                     Lexer lexer = new(sourceCode);
                     List<Token> tokens = [];
                     Token token;
@@ -193,8 +193,8 @@ namespace FeiSharp8._5RuntimeSdk
                 else if (command.Contains("nsbuild"))
                 {
                     Console.WriteLine(">>>:\"Input these codes......Enter 'exit' to exit this mode......\"");
-                   global::System.String code = "";
-                   global::System.String scode = "";
+                   string code = "";
+                   string scode = "";
                     while (code != "exit")
                     {
                         if (code != "exit")
@@ -208,7 +208,7 @@ namespace FeiSharp8._5RuntimeSdk
                             break;
                         }
                     }
-                   global::System.String sourceCode = scode;
+                   string sourceCode = scode;
                     Lexer lexer = new(sourceCode);
                     List<Token> tokens = [];
                     Token token;
@@ -243,11 +243,11 @@ namespace FeiSharp8._5RuntimeSdk
                     if (isvalid)
                     {
                         Console.WriteLine("Your code is correct, will you save the code?(y/n)");
-                       global::System.String yn = Console.ReadLine();
+                       string yn = Console.ReadLine();
                         if (yn == "y")
                         {
                             Console.WriteLine(">>>:\"Please enter the file path:\"");
-                           global::System.String path = Console.ReadLine();
+                           string path = Console.ReadLine();
                             bool isarg = true;
                             try
                             {
@@ -288,14 +288,14 @@ namespace FeiSharp8._5RuntimeSdk
                 else if (command == "feedback")
                 {
                     Console.WriteLine("Please write a feedback:");
-                   global::System.String fb = Console.ReadLine();
-                   global::System.String _1 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+                   string fb = Console.ReadLine();
+                   string _1 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                     Directory.SetCurrentDirectory(_1);
-                   global::System.String _2 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+                   string _2 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                     Directory.SetCurrentDirectory(_2);
-                   global::System.String _3 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+                   string _3 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                     Directory.SetCurrentDirectory(_3);
-                   global::System.String _4 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+                   string _4 = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
                     Directory.SetCurrentDirectory(_4);
                     File.AppendAllText("README.md", fb + "\\");
                     File.WriteAllText("a.bat","git add .\r\ngit commit -m \"Commit FeedBack.\"\r\ngit push");
@@ -409,7 +409,7 @@ namespace FeiSharp8._5RuntimeSdk
                 else if(command == "Use-File")
                 {
                     Console.WriteLine(">>>:\"Input the path......\"");
-                   global::System.String sourceCode = File.ReadAllText(Console.ReadLine());
+                    string sourceCode = File.ReadAllText(Console.ReadLine());
                     Lexer lexer = new(sourceCode);
                     List<Token> tokens = [];
                     Token token;
@@ -434,7 +434,7 @@ namespace FeiSharp8._5RuntimeSdk
                 }
                 else if(command == "MessageBox-Show")
                 {
-                    global::System.String text = Console.ReadLine();
+                    string text = Console.ReadLine();
                     AnsiConsole.MarkupLine("[grey]asdasdasd[/]");
                     AnsiConsole.Prompt(
                     new TextPrompt<string>(text));
@@ -445,7 +445,7 @@ namespace FeiSharp8._5RuntimeSdk
                 }
                 else if (command.Contains("license"))
                 {
-                   global::System.String arg1 = command.Split(' ')[1];
+                   string arg1 = command.Split(' ')[1];
                     if (arg1 == "--type")
                     {
                         Console.WriteLine("Apache License");
@@ -484,7 +484,7 @@ namespace FeiSharp8._5RuntimeSdk
                     };
                     process.StartInfo = startInfo;
                     process.Start();
-                   global::System.String output = process.StandardOutput.ReadToEnd();
+                   string output = process.StandardOutput.ReadToEnd();
                     process.WaitForExit();
                     if (string.IsNullOrEmpty(output))
                     {
@@ -499,7 +499,7 @@ namespace FeiSharp8._5RuntimeSdk
                         };
                         process1.StartInfo = startInfo1;
                         process1.Start();
-                       global::System.String output1 = process1.StandardOutput.ReadToEnd();
+                        string output1 = process1.StandardOutput.ReadToEnd();
                         process1.WaitForExit();
                         Console.WriteLine(output1);
                     }
@@ -525,19 +525,19 @@ namespace FeiSharp8._5RuntimeSdk
     }
     public class CustomConsole
     {
-        [global::System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern global::System.Boolean SetConsoleTextAttribute(global::System.IntPtr WIN_X32_INTEGER32_PTR_H_CONSOLE_OUTPUT_ID_FOR_32BYTES, global::System.UInt16 WIN_X32_UINT16_ATTRIBUTES_FOR_16BYTES);
-        public const global::System.Int32 WIN_X64_INT32_STD_OUTPUT_HANDLE_ID_FOR_32BYTES = -11;
-        [global::System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        private static extern global::System.IntPtr GetStdHandle(global::System.Int32 WIN_X64_INTEGER32_N_STD_HANDLE_FOR_32BYTES);
-        public static void WRITE_GREY_WITHOUT_LINE(global::System.String STR_UCODE_12_TEXT, global::System.UInt16 WIN_X64_UINT16_PTR_FOR_16BYTES)
+        [DllImport("kernel32.dll")]
+        private static extern bool SetConsoleTextAttribute(nint WIN_X32_INTEGER32_PTR_H_CONSOLE_OUTPUT_ID_FOR_32BYTES, ushort WIN_X32_UINT16_ATTRIBUTES_FOR_16BYTES);
+        public const int WIN_X64_INT32_STD_OUTPUT_HANDLE_ID_FOR_32BYTES = -11;
+        [DllImport("kernel32.dll")]
+        private static extern nint GetStdHandle(int WIN_X64_INTEGER32_N_STD_HANDLE_FOR_32BYTES);
+        public static void WRITE_GREY_WITHOUT_LINE(string STR_UCODE_12_TEXT, ushort WIN_X64_UINT16_PTR_FOR_16BYTES)
         {
-            global::System.IntPtr consoleHandle = GetStdHandle(WIN_X64_INT32_STD_OUTPUT_HANDLE_ID_FOR_32BYTES);
-            global::System.UInt16 grayColor = WIN_X64_UINT16_PTR_FOR_16BYTES;
-            global::FeiSharp8._5RuntimeSdk.CustomConsole.SetConsoleTextAttribute(consoleHandle, grayColor);
-            global::System.Console.Write(STR_UCODE_12_TEXT);
-            global::System.UInt16 defaultColor = 7;
-            global::FeiSharp8._5RuntimeSdk.CustomConsole.SetConsoleTextAttribute(consoleHandle, defaultColor);
+            nint consoleHandle = GetStdHandle(WIN_X64_INT32_STD_OUTPUT_HANDLE_ID_FOR_32BYTES);
+            ushort grayColor = WIN_X64_UINT16_PTR_FOR_16BYTES;
+            SetConsoleTextAttribute(consoleHandle, grayColor);
+            Console.Write(STR_UCODE_12_TEXT);
+            ushort defaultColor = 7;
+            SetConsoleTextAttribute(consoleHandle, defaultColor);
         }
     }
 
