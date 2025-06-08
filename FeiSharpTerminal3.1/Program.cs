@@ -61,7 +61,7 @@ namespace FeiSharp8._5RuntimeSdk
                 string command = Console.ReadLine();
                 if (command == "exit")
                 {
-                    global::System.Environment.Exit(0);
+                    Environment.Exit(0);
                 }
                 else if (command.Contains("run"))
                 {
@@ -357,6 +357,58 @@ namespace FeiSharp8._5RuntimeSdk
                         {
                             Console.WriteLine(">>>Invalid format.");
                         }
+                    }
+                }
+                else if (command == "Get-Version")
+                {
+                    Console.WriteLine(">>>FeiSharp Console-Edition 8.0");
+                }
+                else if (command == "Update-Version")
+                {
+                    Console.WriteLine(">>>Finding update file from web......");
+                    if (IsConnectedToInternet())
+                    {
+                        Thread.Sleep(Random.Shared.Next(1500, 4000));
+                        Console.WriteLine(">>>No much update file for download.");
+                    }
+                    else
+                    {
+                        Console.WriteLine(">>>You are not online.");
+                    }
+                }
+                else if (command == "Select-Version")
+                {
+                    Console.WriteLine(">>>Please select version:");
+                    Console.WriteLine("----1.FeiSharp Console-Edition 7.5");
+                    Console.WriteLine("----2.FeiSharp Console-Edition 7.0");
+                    Console.WriteLine("----3.FeiSharp Base Lexer");
+                    try
+                    {
+                        char a = Console.ReadLine().ToCharArray()[0];
+                        if (char.IsDigit(a))
+                        {
+                            int aInt = Convert.ToInt32(a.ToString());
+                            if (aInt > 0 && aInt < 4)
+                            {
+                                Console.WriteLine(">>>Edit version......");
+                                try
+                                {
+                                    using (Ping ping = new Ping())
+                                    {
+                                        PingReply reply = ping.Send("https://github.com", 1000);
+                                    }
+                                    Console.WriteLine(">>>Edit successfully.");
+                                }
+                                catch (PingException)
+                                {
+                                    Console.WriteLine(">>>Can not connect to github.com.");
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        Console.WriteLine(">>>Invalid format.");
                     }
                 }
                 else if (command == "license")
